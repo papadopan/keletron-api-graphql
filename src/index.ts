@@ -5,6 +5,9 @@ import express from "express";
 import http from "http";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/User";
+import { PrismaClient } from '@prisma/client'
+import { Context } from "./types/context";
+const prisma = new PrismaClient()
 
 async function main() {
   const app = express();
@@ -13,6 +16,7 @@ async function main() {
     schema: await buildSchema({
       resolvers: [UserResolver],
     }),
+    context: ({req, res}): Context => ({req, res, db:prisma}),
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   await apolloServer.start();
