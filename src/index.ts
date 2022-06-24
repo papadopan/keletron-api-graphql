@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { ApolloServer } from "apollo-server-express";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import express from "express";
+import cors from "cors"
 import http from "http";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./resolvers/User";
@@ -11,6 +12,7 @@ const prisma = new PrismaClient()
 
 async function main() {
   const app = express();
+  app.use(cors({origin:"*"}))
   const httpServer = http.createServer(app);
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
