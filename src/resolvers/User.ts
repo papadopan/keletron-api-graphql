@@ -1,6 +1,6 @@
 import { Context } from "../types/context";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
-import { LoginCredentials, User } from "../entities/User";
+import { LoginCredentials, SignUpCredentials, User } from "../entities/User";
 import { AuthenticationError, UserInputError } from "apollo-server-core";
 import argon2 from "argon2";
 
@@ -31,5 +31,25 @@ export class UserResolver {
     if(!isPasswordValid) throw new UserInputError("Password is incorrect")
 
     return user
+  }
+
+  @Mutation(()=> User)
+  async signup(
+    @Arg("credentials") credentials: SignUpCredentials,
+    @Ctx() {db}: Context
+  ): Promise<User>{
+    const {first_name, last_name, password, email, city, country} = credentials
+    // hash the password
+    const hashPassword = await argon2.hash(password)
+    const newUser = await db.user.create({data:{
+      first_name,
+      last_name,
+      email,
+      password: hashPassword,
+      city,
+      country
+    }})
+
+    return newUser;
   }
 }
