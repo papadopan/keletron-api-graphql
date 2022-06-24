@@ -25,6 +25,7 @@
     "apollo-server": "^3.9.0",
     "apollo-server-core": "^3.9.0",
     "apollo-server-express": "^3.9.0",
+    "argon2": "^0.28.5",
     "class-validator": "^0.13.2",
     "cors": "^2.8.5",
     "express": "^4.18.1",
