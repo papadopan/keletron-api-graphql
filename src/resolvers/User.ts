@@ -50,6 +50,8 @@ export class UserResolver {
       country
     }})
 
+    if(!newUser) throw new Error("Saving user was not possible, please try again")
+
     return newUser;
   }
 }

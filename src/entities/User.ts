@@ -5,6 +5,23 @@ export class User {
   @Field(() => ID)
   id: number;
 
+  @Field(()=>String)
+  email: string
+
+  @Field(()=>String)
+  first_name: string
+
+  @Field(()=>String)
+  last_name: string
+
+  @Field(()=>String)
+  token_id: string
+
+  @Field(()=> String)
+  city: string
+
+  @Field(()=> String)
+  country: string
 }
 
 
