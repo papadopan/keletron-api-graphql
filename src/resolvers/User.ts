@@ -1,8 +1,9 @@
 import { Context } from "../types/context";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
-import { LoginCredentials, SignUpCredentials, User } from "../entities/User";
+import { EditUser, LoginCredentials, SignUpCredentials, User } from "../entities/User";
 import { AuthenticationError, UserInputError } from "apollo-server-core";
 import argon2 from "argon2";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 @Resolver()
 export class UserResolver {
@@ -53,5 +54,27 @@ export class UserResolver {
     if(!newUser) throw new Error("Saving user was not possible, please try again")
 
     return newUser;
+  }
+
+
+  @Mutation(()=>User)
+  async editUser(
+    @Arg("fields") fields: EditUser,
+    @Arg("email") email: string,
+    @Ctx(){db}: Context
+  ): Promise<User>{
+    try{
+      const updatedUser =  await db.user.update({
+        where:{email: email},
+        data:fields
+      })
+      return updatedUser
+    } catch(e){
+      let message;
+      if(e instanceof PrismaClientKnownRequestError){
+        message = e.meta?.cause as string
+      }
+      throw Error(message || "Updating was not successful, please try again")
+    }
   }
 }
