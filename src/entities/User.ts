@@ -14,14 +14,14 @@ export class User {
   @Field(()=>String)
   last_name: string
 
-  @Field(()=>String)
-  token_id: string
-
   @Field(()=> String)
   city: string
 
   @Field(()=> String)
   country: string
+
+  @Field(()=> String)
+  token_id: string
 }
 
 

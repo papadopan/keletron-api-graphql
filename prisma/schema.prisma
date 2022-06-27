@@ -16,7 +16,7 @@ model User {
   last_name  String   @db.VarChar(30)
   city       String  @db.VarChar(30) @default("Kastoria")
   country    String  @db.VarChar(30) @default("Greece")
-  token_id   String?  @db.VarChar(255)
+  token_id   String  @db.VarChar(255) @default("")
   password   String   @db.VarChar(255)
   email      String   @unique @db.VarChar(255)
   admin      Boolean  @default(false)
