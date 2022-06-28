@@ -20,6 +20,9 @@ export class Details {
   @Field(() => Int)
   num_players: number
 
+  @Field(() => Int)
+  userId: number
+
   @Field(() => [String])
   opponents: string[]
 }
