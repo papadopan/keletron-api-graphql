@@ -16,4 +16,17 @@ export class BookingResolver {
       throw new Error('there is a problem while saving, please try again')
     }
   }
+
+  @Mutation(() => Booking)
+  async deleteBooking(
+    @Arg('id') id: number,
+    @Ctx() { db }: Context
+  ): Promise<Booking> {
+    try {
+      const deleted = await db.booking.delete({ where: { id: id } })
+      return deleted
+    } catch (e) {
+      throw new Error('Problem while deleting, please try again')
+    }
+  }
 }
