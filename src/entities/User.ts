@@ -24,8 +24,8 @@ export class User {
   @Field(() => String)
   token_id: string
 
-  @Field(() => [Booking])
-  bookings: Booking[]
+  @Field(() => [Booking], { nullable: true })
+  bookings?: Booking[]
 }
 
 @InputType()

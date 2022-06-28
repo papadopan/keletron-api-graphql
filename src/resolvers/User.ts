@@ -12,11 +12,14 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
 
 @Resolver()
 export class UserResolver {
-  // fetch information for myself
+  // fetch information for user based on the email
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { db }: Context): Promise<User | null> {
+  async getInfo(
+    @Ctx() { db }: Context,
+    @Arg('email') email: string
+  ): Promise<User | null> {
     const myself = await db.user.findUnique({
-      where: { email: 'antonios.papadopan@gmail.com' },
+      where: { email: email },
       include: { bookings: true },
     })
     return myself
@@ -45,18 +48,14 @@ export class UserResolver {
     @Arg('credentials') credentials: SignUpCredentials,
     @Ctx() { db }: Context
   ): Promise<User> {
-    const { first_name, last_name, password, email, city, country } =
-      credentials
+    const { password } = credentials
     // hash the password
     const hashPassword = await argon2.hash(password)
+
     const newUser = await db.user.create({
       data: {
-        first_name,
-        last_name,
-        email,
+        ...credentials,
         password: hashPassword,
-        city,
-        country,
       },
     })
 
