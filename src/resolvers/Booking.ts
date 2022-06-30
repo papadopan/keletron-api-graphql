@@ -7,8 +7,13 @@ import { getErrorMessages } from '../utils/errors'
 @Resolver()
 export class BookingResolver {
   @Query(() => String)
-  async getMyBookings(@Arg('userId') userId: number) {
-    return 'yeah' + userId
+  async getMyBookings(@Arg('userId') userId: number, @Ctx() { db }: Context) {
+    try {
+      const bookings = db.booking.findFirst({ where: { userId: userId } })
+      return bookings
+    } catch (e) {
+      throw new Error('Bookings can not be fetched now')
+    }
   }
 
   @Mutation(() => Booking)

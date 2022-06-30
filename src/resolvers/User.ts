@@ -1,14 +1,14 @@
-import { Context } from '../types/context'
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql'
+import { Context } from '../types/context';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import {
   EditUser,
   LoginCredentials,
   SignUpCredentials,
   User,
-} from '../entities/User'
-import { AuthenticationError, UserInputError } from 'apollo-server-core'
-import argon2 from 'argon2'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
+} from '../entities/User';
+import { AuthenticationError, UserInputError } from 'apollo-server-core';
+import argon2 from 'argon2';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Resolver()
 export class UserResolver {
@@ -21,8 +21,18 @@ export class UserResolver {
     const myself = await db.user.findUnique({
       where: { email: email },
       include: { bookings: true },
-    })
-    return myself
+    });
+    return myself;
+  }
+
+  @Query(() => [User])
+  async getUsers(@Ctx() { db }: Context): Promise<User[]> {
+    try {
+      const users = db.user.findMany({});
+      return users;
+    } catch (e) {
+      throw new Error('Could not fetch all users');
+    }
   }
 
   @Mutation(() => User)
@@ -30,17 +40,17 @@ export class UserResolver {
     @Arg('credentials') credentials: LoginCredentials,
     @Ctx() { db }: Context
   ): Promise<User> {
-    const { email, password } = credentials
+    const { email, password } = credentials;
 
-    const user = await db.user.findUnique({ where: { email: email } })
+    const user = await db.user.findUnique({ where: { email: email } });
     // if the user does not exist, it means that there is no such email
     // in the db, therefore it is an authentication error
-    if (!user) throw new AuthenticationError('This email does not exist')
-    const isPasswordValid = await argon2.verify(user.password, password)
+    if (!user) throw new AuthenticationError('This email does not exist');
+    const isPasswordValid = await argon2.verify(user.password, password);
     // in case the password
-    if (!isPasswordValid) throw new UserInputError('Password is incorrect')
+    if (!isPasswordValid) throw new UserInputError('Password is incorrect');
 
-    return user
+    return user;
   }
 
   @Mutation(() => User)
@@ -48,21 +58,21 @@ export class UserResolver {
     @Arg('credentials') credentials: SignUpCredentials,
     @Ctx() { db }: Context
   ): Promise<User> {
-    const { password } = credentials
+    const { password } = credentials;
     // hash the password
-    const hashPassword = await argon2.hash(password)
+    const hashPassword = await argon2.hash(password);
 
     const newUser = await db.user.create({
       data: {
         ...credentials,
         password: hashPassword,
       },
-    })
+    });
 
     if (!newUser)
-      throw new Error('Saving user was not possible, please try again')
+      throw new Error('Saving user was not possible, please try again');
 
-    return newUser
+    return newUser;
   }
 
   @Mutation(() => User)
@@ -75,14 +85,14 @@ export class UserResolver {
       const updatedUser = await db.user.update({
         where: { email: email },
         data: fields,
-      })
-      return updatedUser
+      });
+      return updatedUser;
     } catch (e) {
-      let message
+      let message;
       if (e instanceof PrismaClientKnownRequestError) {
-        message = e.meta?.cause as string
+        message = e.meta?.cause as string;
       }
-      throw Error(message || 'Updating was not successful, please try again')
+      throw Error(message || 'Updating was not successful, please try again');
     }
   }
 }
