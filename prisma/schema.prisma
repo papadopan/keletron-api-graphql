@@ -45,7 +45,7 @@ model ResetPassword {
   id         String   @id @default(uuid())
   email      String   @unique @db.VarChar(255)
   confirmed  Boolean  @default(false)
-  expiration DateTime @default(dbgenerated("NOW() + interval '1 hour'"))
+  expiration DateTime @default(now())
 }
 
 model Confirmation {

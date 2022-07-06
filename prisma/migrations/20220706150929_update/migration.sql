@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ResetPassword" ALTER COLUMN "expiration" SET DEFAULT CURRENT_TIMESTAMP;
