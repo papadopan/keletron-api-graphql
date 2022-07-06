@@ -6,7 +6,11 @@ import {
   SignUpCredentials,
   User,
 } from '../entities/User';
-import { AuthenticationError, UserInputError } from 'apollo-server-core';
+import {
+  AuthenticationError,
+  UserInputError,
+  ValidationError,
+} from 'apollo-server-core';
 import argon2 from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
@@ -50,6 +54,8 @@ export class UserResolver {
     // in case the password
     if (!isPasswordValid) throw new UserInputError('Password is incorrect');
 
+    if (!user.activated) throw new Error('This account is not activated yet!');
+
     return user;
   }
 
@@ -59,20 +65,32 @@ export class UserResolver {
     @Ctx() { db }: Context
   ): Promise<User> {
     const { password } = credentials;
+
     // hash the password
     const hashPassword = await argon2.hash(password);
 
-    const newUser = await db.user.create({
-      data: {
-        ...credentials,
-        password: hashPassword,
-      },
-    });
+    try {
+      const newUser = await db.user.create({
+        data: {
+          ...credentials,
+          password: hashPassword,
+        },
+      });
 
-    if (!newUser)
-      throw new Error('Saving user was not possible, please try again');
-
-    return newUser;
+      // create a new confitmation record
+      await db.confirmation.create({
+        data: {
+          userId: newUser.id,
+        },
+      });
+      return newUser;
+    } catch (e) {
+      let message = 'Saving user was not possible, please try again';
+      if (e instanceof PrismaClientKnownRequestError && e.code == 'P2002') {
+        message = 'This email is already registered!!!';
+      }
+      throw new ValidationError(message);
+    }
   }
 
   @Mutation(() => User)
@@ -94,5 +112,43 @@ export class UserResolver {
       }
       throw Error(message || 'Updating was not successful, please try again');
     }
+  }
+
+  @Mutation(() => String)
+  async confirmUser(
+    @Ctx() { db }: Context,
+    @Arg('id') id: string
+  ): Promise<string> {
+    const confirmation = await db.confirmation.findUnique({
+      where: { id: id },
+    });
+    if (!confirmation) throw new Error('Please provide a valid id');
+
+    if (confirmation.confirmed)
+      throw new Error('This is account is already confirmed');
+    const now = new Date();
+
+    // more than half an hour
+    const isExpired = confirmation.expiration.getTime() - now.getTime() > 1800;
+    if (isExpired)
+      throw new Error(
+        'This confirmation id is expired, please request a new one'
+      );
+
+    try {
+      await db.user.update({
+        where: { id: confirmation.userId },
+        data: { activated: true },
+      });
+
+      await db.confirmation.update({
+        where: { id: id },
+        data: { confirmed: true },
+      });
+    } catch (e) {
+      throw new Error('Confirmation update was not successful');
+    }
+
+    return 'User Confirmed';
   }
 }
