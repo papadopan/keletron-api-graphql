@@ -54,15 +54,4 @@ model Confirmation {
   // needs to have the user id
 }
 
-model Timetable {
-  id Int @id @default(autoincrement())
-  sunday Json[]
-  monday Json[]
-  tuesday Json[]
-  wednesday Json[]
-  thursday Json[]
-  friday Json[]
-  saturday Json[]
-  weekend Json[]
-  weekdays Json[]
-}
+
