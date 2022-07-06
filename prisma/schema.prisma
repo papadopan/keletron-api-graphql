@@ -25,6 +25,7 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   bookings Booking[]
+  confirmation Confirmation?
 }
 
 model Booking {
@@ -51,7 +52,8 @@ model Confirmation {
   id         String   @id @default(uuid())
   confirmed  Boolean  @default(false)
   expiration DateTime @default(now())
-  // needs to have the user id
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
 }
 
 
