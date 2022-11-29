@@ -83,6 +83,7 @@ export class UserResolver {
           userId: newUser.id,
         },
       });
+
       return newUser;
     } catch (e) {
       let message = 'Saving user was not possible, please try again';

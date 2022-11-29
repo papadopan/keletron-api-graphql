@@ -1,18 +1,21 @@
-import { Booking, Details } from '../entities/Booking'
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql'
-import { Context } from '../types/context'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime'
-import { getErrorMessages } from '../utils/errors'
+import { Booking, Details } from '../entities/Booking';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Context } from '../types/context';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { getErrorMessages } from '../utils/errors';
 
 @Resolver()
 export class BookingResolver {
-  @Query(() => String)
-  async getMyBookings(@Arg('userId') userId: number, @Ctx() { db }: Context) {
+  @Query(() => [Booking])
+  async getMyBookings(
+    @Arg('userId') userId: number,
+    @Ctx() { db }: Context
+  ): Promise<Booking[]> {
     try {
-      const bookings = db.booking.findFirst({ where: { userId: userId } })
-      return bookings
+      const bookings = db.booking.findMany({ where: { userId: userId } });
+      return bookings;
     } catch (e) {
-      throw new Error('Bookings can not be fetched now')
+      throw new Error('Bookings can not be fetched now');
     }
   }
 
@@ -22,15 +25,15 @@ export class BookingResolver {
     @Ctx() { db }: Context
   ): Promise<Booking> {
     try {
-      const booking = await db.booking.create({ data: details })
-      return booking
+      const booking = await db.booking.create({ data: details });
+      return booking;
     } catch (e) {
-      let message = ''
-      const defaultMessage = 'Problem while saving. Please try again...'
+      let message = '';
+      const defaultMessage = 'Problem while saving. Please try again...';
       if (e instanceof PrismaClientKnownRequestError) {
-        message = e.meta ? getErrorMessages(e.meta) : defaultMessage
+        message = e.meta ? getErrorMessages(e.meta) : defaultMessage;
       }
-      throw new Error(message)
+      throw new Error(message);
     }
   }
 
@@ -40,10 +43,10 @@ export class BookingResolver {
     @Ctx() { db }: Context
   ): Promise<Booking> {
     try {
-      const deleted = await db.booking.delete({ where: { id: id } })
-      return deleted
+      const deleted = await db.booking.delete({ where: { id: id } });
+      return deleted;
     } catch (e) {
-      throw new Error('Problem while deleting, please try again')
+      throw new Error('Problem while deleting, please try again');
     }
   }
 }
