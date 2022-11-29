@@ -33,8 +33,6 @@ async function main() {
   );
 }
 
-main()
-  .catch(e => {
-    throw e;
-  })
-  .finally(() => {});
+main().catch(e => {
+  throw e;
+});
