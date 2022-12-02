@@ -13,6 +13,7 @@ import {
 } from 'apollo-server-core';
 import argon2 from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import nodemailer from 'nodemailer';
 
 @Resolver()
 export class UserResolver {
@@ -46,7 +47,10 @@ export class UserResolver {
   ): Promise<User> {
     const { email, password } = credentials;
 
-    const user = await db.user.findUnique({ where: { email: email } });
+    const user = await db.user.findUnique({
+      where: { email: email },
+      include: { bookings: true },
+    });
     // if the user does not exist, it means that there is no such email
     // in the db, therefore it is an authentication error
     if (!user) throw new AuthenticationError('This email does not exist');
@@ -83,6 +87,23 @@ export class UserResolver {
           userId: newUser.id,
         },
       });
+
+      const mailTransporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'keletronapp@gmail.com',
+          pass: process.env.GOOGLE_PWD,
+        },
+      });
+
+      const details = {
+        from: '<no response email>',
+        to: 'antonios.papadopan@gmail.com',
+        subject: 'HElloo',
+        text: 'Welcome to our app',
+      };
+
+      mailTransporter.sendMail(details, err => console.log(err));
 
       return newUser;
     } catch (e) {
