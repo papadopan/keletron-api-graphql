@@ -51,6 +51,7 @@ model ResetPassword {
 model Confirmation {
   id         String   @id @default(uuid())
   confirmed  Boolean  @default(false)
+  validation Int
   expiration DateTime @default(now())
   user User @relation(fields: [userId], references: [id])
   userId Int @unique

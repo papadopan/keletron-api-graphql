@@ -19,6 +19,23 @@ export class BookingResolver {
     }
   }
 
+  @Query(() => [Booking])
+  async getBookingsByDate(
+    @Arg('date') date: string,
+    @Ctx() { db }: Context
+  ): Promise<Booking[]> {
+    try {
+      const bookings = await db.booking.findMany({
+        where: { date_booking: date },
+      });
+      return bookings;
+    } catch (e) {
+      throw new Error(
+        `Bookings for the ${date} where not able to fetch, please try again`
+      );
+    }
+  }
+
   @Mutation(() => Booking)
   async addBooking(
     @Arg('details') details: Details,

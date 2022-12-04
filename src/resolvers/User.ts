@@ -85,6 +85,7 @@ export class UserResolver {
       await db.confirmation.create({
         data: {
           userId: newUser.id,
+          validation: Math.floor(Math.random() * 9000000),
         },
       });
 
