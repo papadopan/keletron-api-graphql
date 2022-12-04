@@ -57,4 +57,15 @@ model Confirmation {
   userId Int @unique
 }
 
+model Schedule {
+  id Int @id@default(autoincrement())
+  monday String
+  tuesday String
+  wednesday String
+  thursday String
+  friday String
+  saturday String
+  sunday String
+}
+
 
