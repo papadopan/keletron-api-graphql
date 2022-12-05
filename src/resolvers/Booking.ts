@@ -1,4 +1,4 @@
-import { Booking, Details } from '../entities/Booking';
+import { Booking, Details, Schedule } from '../entities/Booking';
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { Context } from '../types/context';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
@@ -33,6 +33,17 @@ export class BookingResolver {
       throw new Error(
         `Bookings for the ${date} where not able to fetch, please try again`
       );
+    }
+  }
+
+  @Query(() => Schedule)
+  async getSchedule(@Ctx() { db }: Context): Promise<Schedule | null> {
+    try {
+      const schedule = await db.schedule.findFirst();
+      console.log('---', schedule);
+      return schedule;
+    } catch (e) {
+      throw new Error('Keletron Schedule was not fetched, please try again');
     }
   }
 

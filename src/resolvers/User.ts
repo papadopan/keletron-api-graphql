@@ -21,10 +21,10 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   async getInfo(
     @Ctx() { db }: Context,
-    @Arg('email') email: string
+    @Arg('userId') userId: string
   ): Promise<User | null> {
     const myself = await db.user.findUnique({
-      where: { email: email },
+      where: { id: Number(userId) },
       include: { bookings: true },
     });
     return myself;

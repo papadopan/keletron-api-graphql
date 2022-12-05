@@ -44,3 +44,29 @@ export class Details {
   @Field(() => [String])
   opponents: string[];
 }
+
+@ObjectType()
+export class Schedule {
+  @Field(() => ID)
+  id: number;
+
+  @Field(() => String)
+  monday: string;
+
+  @Field(() => String)
+  tuesday: string;
+
+  @Field(() => String)
+  wednesday: string;
+  @Field(() => String)
+  thursday: string;
+
+  @Field(() => String)
+  friday: string;
+
+  @Field(() => String)
+  saturday: string;
+
+  @Field(() => String)
+  sunday: string;
+}
