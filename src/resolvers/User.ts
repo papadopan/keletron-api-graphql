@@ -48,7 +48,7 @@ export class UserResolver {
     const { email, password } = credentials;
 
     const user = await db.user.findUnique({
-      where: { email: email },
+      where: { email: email.toLowerCase() },
       include: { bookings: true },
     });
     // if the user does not exist, it means that there is no such email
@@ -68,7 +68,7 @@ export class UserResolver {
     @Arg('credentials') credentials: SignUpCredentials,
     @Ctx() { db }: Context
   ): Promise<User> {
-    const { password } = credentials;
+    const { password, email } = credentials;
 
     // hash the password
     const hashPassword = await argon2.hash(password);
@@ -77,6 +77,7 @@ export class UserResolver {
       const newUser = await db.user.create({
         data: {
           ...credentials,
+          email: email.toLowerCase(),
           password: hashPassword,
         },
       });

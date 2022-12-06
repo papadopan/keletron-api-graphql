@@ -40,7 +40,6 @@ export class BookingResolver {
   async getSchedule(@Ctx() { db }: Context): Promise<Schedule | null> {
     try {
       const schedule = await db.schedule.findFirst();
-      console.log('---', schedule);
       return schedule;
     } catch (e) {
       throw new Error('Keletron Schedule was not fetched, please try again');
