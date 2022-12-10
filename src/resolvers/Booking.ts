@@ -8,11 +8,13 @@ import { getErrorMessages } from '../utils/errors';
 export class BookingResolver {
   @Query(() => [Booking])
   async getMyBookings(
-    @Arg('userId') userId: number,
+    @Arg('userId') userId: string,
     @Ctx() { db }: Context
   ): Promise<Booking[]> {
     try {
-      const bookings = db.booking.findMany({ where: { userId: userId } });
+      const bookings = db.booking.findMany({
+        where: { userId: Number(userId) },
+      });
       return bookings;
     } catch (e) {
       throw new Error('Bookings can not be fetched now');
