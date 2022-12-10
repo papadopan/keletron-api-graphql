@@ -5,6 +5,7 @@ import {
   LoginCredentials,
   SignUpCredentials,
   User,
+  Confirmation,
 } from '../entities/User';
 import {
   AuthenticationError,
@@ -38,6 +39,30 @@ export class UserResolver {
     } catch (e) {
       throw new Error('Could not fetch all users');
     }
+  }
+
+  @Mutation(() => Confirmation)
+  async forgotPassword(
+    @Arg('email') email: string,
+    @Ctx() { db }: Context
+  ): Promise<Confirmation> {
+    const user = await db.user.findUnique({ where: { email: email } });
+
+    if (!user) throw new AuthenticationError('This email does not exist');
+
+    // delete if confirmation for that user already exists
+    await db.confirmation.delete({ where: { userId: user.id } });
+
+    const confirmation = await db.confirmation.create({
+      data: {
+        userId: user.id,
+        validation: Math.floor(Math.random() * 9000000),
+      },
+    });
+
+    if (!confirmation) throw new Error('Confirmation code was not created');
+
+    return confirmation;
   }
 
   @Mutation(() => User)
