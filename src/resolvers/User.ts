@@ -43,6 +43,35 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  async validateUser(
+    @Arg('code') code: string,
+    @Arg('email') email: string,
+    @Ctx() { db }: Context
+  ): Promise<User> {
+    const user = await db.user.findUnique({ where: { email: email } });
+
+    if (!user) throw new ValidationError('This email does not exist');
+
+    const confirmation = await db.confirmation.findUnique({
+      where: { userId: user.id },
+    });
+
+    if (!confirmation || confirmation.validation !== Number(code))
+      throw new ValidationError('Code is not valid, request a new one');
+
+    await db.confirmation.delete({ where: { userId: user.id } });
+
+    const updateUser = db.user.update({
+      where: { email: email },
+      data: {
+        activated: true,
+      },
+    });
+
+    return updateUser;
+  }
+
+  @Mutation(() => User)
   async updateForgottenPassword(
     @Arg('details') details: ForgotDetails,
     @Ctx() { db }: Context
@@ -155,10 +184,10 @@ export class UserResolver {
       });
 
       // create a new confitmation record
-      await db.confirmation.create({
+      const conf = await db.confirmation.create({
         data: {
           userId: newUser.id,
-          validation: Math.floor(Math.random() * 9000000),
+          validation: Math.floor(Math.random() * 8000000),
         },
       });
 
@@ -173,8 +202,8 @@ export class UserResolver {
       const details = {
         from: '<no response email>',
         to: 'antonios.papadopan@gmail.com',
-        subject: 'HElloo',
-        text: 'Welcome to our app',
+        subject: 'Keletron Tennis Academy',
+        html: `Your code to activate your account is ${conf.validation}`,
       };
 
       mailTransporter.sendMail(details, err => console.log(err));
