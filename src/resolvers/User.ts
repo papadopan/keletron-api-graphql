@@ -4,6 +4,7 @@ import {
   EditUser,
   LoginCredentials,
   SignUpCredentials,
+  ForgotDetails,
   User,
   Confirmation,
 } from '../entities/User';
@@ -41,22 +42,68 @@ export class UserResolver {
     }
   }
 
+  @Mutation(() => User)
+  async updateForgottenPassword(
+    @Arg('details') details: ForgotDetails,
+    @Ctx() { db }: Context
+  ): Promise<User> {
+    const { email, password, code } = details;
+    const user = await db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) throw new ValidationError('Email does not exist');
+
+    const validationCode = await db.confirmation.findUnique({
+      where: { userId: user.id },
+    });
+
+    if (!validationCode)
+      throw new ValidationError('Confirmation Code does not exist');
+
+    if (validationCode.validation !== Number(code))
+      throw new ValidationError('The code you provided does not match');
+
+    // delete this code
+    await db.confirmation.delete({ where: { userId: user.id } });
+
+    // hash the password
+    const hashPassword = await argon2.hash(password);
+
+    // update the user with the new password
+    const updatedUser = await db.user.update({
+      where: { email: user.email },
+      data: {
+        password: hashPassword,
+      },
+    });
+
+    return updatedUser;
+  }
+
   @Mutation(() => Confirmation)
   async forgotPassword(
     @Arg('email') email: string,
     @Ctx() { db }: Context
   ): Promise<Confirmation> {
-    const user = await db.user.findUnique({ where: { email: email } });
+    const user = await db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
 
     if (!user) throw new AuthenticationError('This email does not exist');
 
+    const currentConfirmation = await db.confirmation.findUnique({
+      where: { userId: user.id },
+    });
+
     // delete if confirmation for that user already exists
-    await db.confirmation.delete({ where: { userId: user.id } });
+    if (currentConfirmation)
+      await db.confirmation.delete({ where: { userId: user.id } });
 
     const confirmation = await db.confirmation.create({
       data: {
         userId: user.id,
-        validation: Math.floor(Math.random() * 9000000),
+        validation: Math.floor(Math.random() * 8000000),
       },
     });
 

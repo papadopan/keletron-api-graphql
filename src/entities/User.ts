@@ -46,6 +46,18 @@ export class LoginCredentials {
 }
 
 @InputType()
+export class ForgotDetails {
+  @Field(() => String, { nullable: false })
+  email: string;
+
+  @Field(() => String, { nullable: false })
+  password: string;
+
+  @Field(() => String, { nullable: false })
+  code: string;
+}
+
+@InputType()
 export class SignUpCredentials {
   @Field(() => String, { nullable: false })
   email: string;
