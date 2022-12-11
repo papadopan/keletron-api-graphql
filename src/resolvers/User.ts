@@ -48,7 +48,9 @@ export class UserResolver {
     @Arg('email') email: string,
     @Ctx() { db }: Context
   ): Promise<User> {
-    const user = await db.user.findUnique({ where: { email: email } });
+    const user = await db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
 
     if (!user) throw new ValidationError('This email does not exist');
 
@@ -62,7 +64,7 @@ export class UserResolver {
     await db.confirmation.delete({ where: { userId: user.id } });
 
     const updateUser = db.user.update({
-      where: { email: email },
+      where: { email: email.toLowerCase() },
       data: {
         activated: true,
       },
@@ -77,6 +79,7 @@ export class UserResolver {
     @Ctx() { db }: Context
   ): Promise<User> {
     const { email, password, code } = details;
+
     const user = await db.user.findUnique({
       where: { email: email.toLowerCase() },
     });
@@ -201,7 +204,7 @@ export class UserResolver {
 
       const details = {
         from: '<no response email>',
-        to: 'antonios.papadopan@gmail.com',
+        to: email.toLowerCase(),
         subject: 'Keletron Tennis Academy',
         html: `Your code to activate your account is ${conf.validation}`,
       };
