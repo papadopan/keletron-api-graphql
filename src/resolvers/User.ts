@@ -141,6 +141,23 @@ export class UserResolver {
 
     if (!confirmation) throw new Error('Confirmation code was not created');
 
+    const mailTransporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'keletronapp@gmail.com',
+        pass: process.env.GOOGLE_PWD,
+      },
+    });
+
+    const details = {
+      from: '<no response email>',
+      to: email.toLowerCase(),
+      subject: 'Keletron Tennis Academy',
+      html: `Your code to activate your account is ${confirmation.validation}`,
+    };
+
+    mailTransporter.sendMail(details, err => console.log(err));
+
     return confirmation;
   }
 
