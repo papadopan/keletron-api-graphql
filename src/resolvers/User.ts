@@ -296,4 +296,52 @@ export class UserResolver {
 
     return 'User Confirmed';
   }
+
+  @Mutation(() => User)
+  async getActivationCode(
+    @Arg('email') email: string,
+    @Ctx() { db }: Context
+  ): Promise<User> {
+    const user = await db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) throw new AuthenticationError('This email does not exist');
+
+    const currentConfirmation = await db.confirmation.findUnique({
+      where: { userId: user.id },
+    });
+
+    // delete if confirmation for that user already exists
+    if (currentConfirmation)
+      await db.confirmation.delete({ where: { userId: user.id } });
+
+    const confirmation = await db.confirmation.create({
+      data: {
+        userId: user.id,
+        validation: Math.floor(Math.random() * 8000000),
+      },
+    });
+
+    if (!confirmation) throw new Error('Confirmation code was not created');
+
+    const mailTransporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'keletronapp@gmail.com',
+        pass: process.env.GOOGLE_PWD,
+      },
+    });
+
+    const details = {
+      from: '<no response email>',
+      to: user.email,
+      subject: 'Keletron Tennis Academy',
+      html: `Your activation code is ${confirmation.validation}`,
+    };
+
+    mailTransporter.sendMail(details, err => console.log(err));
+
+    return user;
+  }
 }
