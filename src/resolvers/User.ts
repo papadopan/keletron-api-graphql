@@ -63,6 +63,8 @@ export class UserResolver {
 
     await db.confirmation.delete({ where: { userId: user.id } });
 
+    if (user.activated) throw new Error('Account is already activated');
+
     const updateUser = db.user.update({
       where: { email: email.toLowerCase() },
       data: {
