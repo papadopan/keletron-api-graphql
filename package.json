@@ -8,8 +8,8 @@
     "dev": "nodemon dist/index.js",
     "install": "yarn",
     "run:typescript": "tsc",
-    "migrate:prisma": "npx prisma db push",
-    "build": "yarn && tsc",
+    "prisma": "npx prisma db push",
+    "build": "yarn && tsc && \"npm run prisma\"",
     "run:server": "node dist/index.js"
   },
   "repository": {
