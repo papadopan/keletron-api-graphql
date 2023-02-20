@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
-    "dev": "nodemon dist/index.js"
+    "dev": "nodemon dist/index.js",
+    "run:tsc": "tsc",
+    "run:server": "node dist/index.js"
   },
   "repository": {
     "type": "git",
