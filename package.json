@@ -6,10 +6,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "install": "yarn",
-    "run:typescript": "tsc",
-    "prisma": "npx prisma db push",
-    "build": "yarn && tsc && npm run prisma",
+    "build": "yarn && tsc",
     "run:server": "node dist/index.js"
   },
   "repository": {
