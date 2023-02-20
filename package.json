@@ -9,7 +9,7 @@
     "install": "yarn",
     "run:typescript": "tsc",
     "prisma": "npx prisma db push",
-    "build": "yarn && tsc && \"npm run prisma\"",
+    "build": "yarn && tsc && npm run prisma",
     "run:server": "node dist/index.js"
   },
   "repository": {
