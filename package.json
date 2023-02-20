@@ -6,7 +6,10 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon dist/index.js",
-    "build": "yarn && tsc",
+    "install": "yarn",
+    "run:typescript": "tsc",
+    "migrate:prisma": "npx prisma db push",
+    "build": "\"yarn install\" \"yarn run:typescript\" \"yarn migrate:prisma\"",
     "run:server": "node dist/index.js"
   },
   "repository": {
