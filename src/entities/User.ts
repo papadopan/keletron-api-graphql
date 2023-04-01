@@ -32,6 +32,9 @@ export class User {
   @Field(() => String)
   token_id: string;
 
+  @Field(() => Boolean)
+  admin: boolean;
+
   @Field(() => [Booking], { nullable: true })
   bookings?: Booking[];
 }
