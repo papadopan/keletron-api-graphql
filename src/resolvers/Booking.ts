@@ -3,6 +3,7 @@ import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { Context } from '../types/context';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { getErrorMessages } from '../utils/errors';
+import { sendNotification } from '../utils/notifications';
 
 @Resolver()
 export class BookingResolver {
@@ -55,6 +56,7 @@ export class BookingResolver {
   ): Promise<Booking> {
     try {
       const booking = await db.booking.create({ data: details });
+      sendNotification();
       return booking;
     } catch (e) {
       let message = '';
