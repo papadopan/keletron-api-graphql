@@ -24,6 +24,7 @@ model User {
   lang       String   @default("en") @db.VarChar(10)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  notificationToken String @default("")
   bookings Booking[]
   confirmation Confirmation?
 }
