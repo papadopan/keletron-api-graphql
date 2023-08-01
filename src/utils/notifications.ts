@@ -1,32 +1,23 @@
-import { applicationDefault, initializeApp } from 'firebase-admin/app';
-import { getMessaging, TokenMessage } from 'firebase-admin/messaging';
+import * as admin from 'firebase-admin';
+import * as serviceAccount from './serviceAccountKey.json';
 
 const registrationToken =
-  'epPNyXL900_lhM0ZqUo8HW:APA91bGEF-LTCwtuqsop0E_b_XU2lP3ES1p6xh64KSJD8LpEeTP0zfcXDTjKe0WxCu5j0eOh3FDPPCOZff2Kjvvy_M3XsjofVlB7I0so5B9r5aPbB2dC3BUcz-Jp_oNUJaIERXtGeorP';
+  'fx_XBjNkrEbHl2Y39O7T6g:APA91bFdxpzAAVucNj94EsiTxqMTIRuHo8Y8yjj2VmE7YJbZHSpqD0AF45FCQqPTWM_tzsgB-IUUxpJTOycSVDvt-_89jQKLcWrZnRe9F6n0V5uQDhr0-w-yqvnqlnNCKTiHy4P6a4ni';
 
-const message: TokenMessage = {
-  apns: {
-    payload: {
-      aps: {
-        alert: {
-          title: 'Hello',
-          body: 'Hello, world!',
-        },
-      },
-    },
-  },
-  token: registrationToken,
-};
-
-const app = initializeApp({
-  credential: applicationDefault(),
+const app = admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as any),
 });
 
-const messaging = getMessaging(app);
-
 export const sendNotification = () => {
-  messaging
-    .send(message)
+  app
+    .messaging()
+    .send({
+      token: registrationToken,
+      notification: {
+        title: 'Hello',
+        body: 'Hello, world!',
+      },
+    })
     .then(response => {
       // Response is a message ID string.
       console.log('Successfully sent message:', response);
