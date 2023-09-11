@@ -97,4 +97,7 @@ export class EditUser {
 
   @Field(() => String, { nullable: true })
   country?: string;
+
+  @Field(() => String, { nullable: true })
+  token_id?: string;
 }

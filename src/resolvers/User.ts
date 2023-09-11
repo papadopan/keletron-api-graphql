@@ -252,7 +252,7 @@ export class UserResolver {
         data: fields,
       });
       return updatedUser;
-    } catch (e) {
+    } catch (e: unknown) {
       let message;
       if (e instanceof PrismaClientKnownRequestError) {
         message = e.meta?.cause as string;
