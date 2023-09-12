@@ -62,7 +62,7 @@ export class BookingResolver {
 
       sendNotification(admins, {
         title: 'Νεα Κράτηση',
-        body: `Ημέρα: ${details.date_booking}, Ωρα: ${details.date_booking}`,
+        body: `Ημέρα: ${details.date_booking}, Ωρα: ${details.time_slot}`,
       });
       return booking;
     } catch (e) {
