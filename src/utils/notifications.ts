@@ -27,6 +27,7 @@ export const sendNotification = (
         payload: {
           aps: {
             sound: 'default',
+            badge: 1,
           },
         },
       },

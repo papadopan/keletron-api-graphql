@@ -59,6 +59,7 @@ export class BookingResolver {
       const admins = (await db.user.findMany({ where: { admin: true } })).map(
         user => user.token_id
       );
+      console.log('AAA', admins);
       sendNotification(admins, {
         title: 'New Booking',
         body: `New booking for ${details.date_booking} at ${details.time_slot}`,
