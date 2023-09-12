@@ -17,10 +17,15 @@ export const sendNotification = () => {
         title: 'Hello',
         body: 'Hello, world!',
       },
+      data: {
+        score: '850',
+        time: '2:45',
+      },
       apns: {
         payload: {
           aps: {
             sound: 'default',
+            badge: 42,
           },
         },
       },
