@@ -1,8 +1,8 @@
 import * as admin from 'firebase-admin';
 import * as serviceAccount from './serviceAccountKey.json';
 
-const registrationToken =
-  'c42B58qm-UgGtWmq4CyDD0:APA91bH-YIhM7B0Qr3ZsfQtROA-Zpq4GDaUUhAQijU3ObzZX0LU48YETfO3w6W1Vx3JUnyuGT2SSe6YI5AXTpRxKAHLp0cRuj9cA-N6HlrRrYpcgdF_6vyKYT0tuaGDMd-_1AEbwSkfG';
+// const registrationToken =
+//   'c42B58qm-UgGtWmq4CyDD0:APA91bH-YIhM7B0Qr3ZsfQtROA-Zpq4GDaUUhAQijU3ObzZX0LU48YETfO3w6W1Vx3JUnyuGT2SSe6YI5AXTpRxKAHLp0cRuj9cA-N6HlrRrYpcgdF_6vyKYT0tuaGDMd-_1AEbwSkfG';
 
 const app = admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as any),
