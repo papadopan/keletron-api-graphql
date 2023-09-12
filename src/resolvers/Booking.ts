@@ -56,7 +56,13 @@ export class BookingResolver {
   ): Promise<Booking> {
     try {
       const booking = await db.booking.create({ data: details });
-      sendNotification();
+      const admins = (await db.user.findMany({ where: { admin: true } })).map(
+        user => user.token_id
+      );
+      sendNotification(admins, {
+        title: 'New Booking',
+        body: `New booking for ${details.date_booking} at ${details.time_slot}`,
+      });
       return booking;
     } catch (e) {
       let message = '';

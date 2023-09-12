@@ -8,15 +8,21 @@ const app = admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as any),
 });
 
-export const sendNotification = () => {
+export const sendNotification = (
+  admins: string[],
+  notification: {
+    title: string;
+    body: string;
+  } = {
+    title: 'Hello',
+    body: 'Hello World',
+  }
+) => {
   app
     .messaging()
-    .send({
-      token: registrationToken,
-      notification: {
-        title: 'Hello',
-        body: 'Hello, world!',
-      },
+    .sendEachForMulticast({
+      tokens: admins,
+      notification: notification,
       apns: {
         payload: {
           aps: {
