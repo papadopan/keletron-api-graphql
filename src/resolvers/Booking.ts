@@ -61,8 +61,8 @@ export class BookingResolver {
         .filter(Boolean);
 
       sendNotification(admins, {
-        title: 'New Booking',
-        body: `New booking for ${details.date_booking} at ${details.time_slot}`,
+        title: 'Νεα Κράτηση',
+        body: `Ημέρα: ${details.date_booking}, Ωρα: ${details.date_booking}`,
       });
       return booking;
     } catch (e) {
