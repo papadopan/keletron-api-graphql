@@ -16,8 +16,13 @@ export const sendNotification = () => {
       notification: {
         title: 'Hello',
         body: 'Hello, world!',
-        sound: 'default',
-        click_action: 'FLUTTER_NOTIFICATION_CLICK',
+      },
+      apns: {
+        payload: {
+          aps: {
+            sound: 'default',
+          },
+        },
       },
     })
     .then(response => {
