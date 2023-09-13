@@ -20,6 +20,9 @@
     "url": "https://github.com/papadopan/keletron-api-graphql/issues"
   },
   "homepage": "https://github.com/papadopan/keletron-api-graphql#readme",
+  "engines": {
+    "node": "^16 || ^20"
+  },
   "dependencies": {
     "@commitlint/config-conventional": "^17.0.2",
     "@prisma/client": "^3.15.2",
