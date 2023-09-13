@@ -15,7 +15,7 @@ import {
 } from 'apollo-server-core';
 import argon2 from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import nodemailer from 'nodemailer';
+import { sendEmail } from '../utils/email';
 
 @Resolver()
 export class UserResolver {
@@ -143,22 +143,11 @@ export class UserResolver {
 
     if (!confirmation) throw new Error('Confirmation code was not created');
 
-    const mailTransporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'keletronapp@gmail.com',
-        pass: process.env.GOOGLE_PWD,
-      },
-    });
-
-    const details = {
-      from: '<no response email>',
-      to: email.toLowerCase(),
-      subject: 'Keletron Tennis Academy',
-      html: `Your code to activate your account is ${confirmation.validation}`,
-    };
-
-    mailTransporter.sendMail(details, err => console.log(err));
+    // send email to user
+    sendEmail(
+      email.toLowerCase(),
+      `Your code to activate your account is ${confirmation.validation}`
+    );
 
     return confirmation;
   }
@@ -213,22 +202,10 @@ export class UserResolver {
         },
       });
 
-      const mailTransporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'keletronapp@gmail.com',
-          pass: process.env.GOOGLE_PWD,
-        },
-      });
-
-      const details = {
-        from: '<no response email>',
-        to: email.toLowerCase(),
-        subject: 'Keletron Tennis Academy',
-        html: `Your code to activate your account is ${conf.validation}`,
-      };
-
-      mailTransporter.sendMail(details, err => console.log(err));
+      sendEmail(
+        email.toLowerCase(),
+        `Your code to activate your account is ${conf.validation}`
+      );
 
       return newUser;
     } catch (e) {
@@ -327,22 +304,10 @@ export class UserResolver {
 
     if (!confirmation) throw new Error('Confirmation code was not created');
 
-    const mailTransporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'keletronapp@gmail.com',
-        pass: process.env.GOOGLE_PWD,
-      },
-    });
-
-    const details = {
-      from: '<no response email>',
-      to: user.email,
-      subject: 'Keletron Tennis Academy',
-      html: `Your activation code is ${confirmation.validation}`,
-    };
-
-    mailTransporter.sendMail(details, err => console.log(err));
+    sendEmail(
+      email.toLowerCase(),
+      `Your code to activate your account is ${confirmation.validation}`
+    );
 
     return user;
   }
