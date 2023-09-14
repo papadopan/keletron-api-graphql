@@ -21,6 +21,18 @@ export class BookingResolver {
       throw new Error('Bookings can not be fetched now');
     }
   }
+  @Query(() => [Booking])
+  async getAllBookings(@Ctx() { db }: Context): Promise<Booking[]> {
+    try {
+      const bookings = db.booking.findMany({
+        orderBy: { date_booking: 'desc' },
+        take: 20,
+      });
+      return bookings;
+    } catch (e) {
+      throw new Error('Bookings can not be fetched now');
+    }
+  }
 
   @Query(() => [Booking])
   async getBookingsByDate(
