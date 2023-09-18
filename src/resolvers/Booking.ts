@@ -81,10 +81,12 @@ export class BookingResolver {
         day: 'numeric',
       });
 
+      // Send notification to admins
       sendNotification(admins, {
         title: 'Νεα Κράτηση',
         body: `${user?.last_name} ${user?.first_name} κράτηση στις ${details.time_slot} ${date}`,
       });
+
       return booking;
     } catch (e) {
       let message = '';
