@@ -71,10 +71,19 @@ export class BookingResolver {
       const admins = (await db.user.findMany({ where: { admin: true } }))
         .map(user => user.token_id)
         .filter(Boolean);
+      const user = await db.user.findUnique({
+        where: { id: details.userId },
+      });
+
+      const date = new Date(details.date_booking).toLocaleDateString('el-GR', {
+        weekday: 'long',
+        month: 'numeric',
+        day: 'numeric',
+      });
 
       sendNotification(admins, {
         title: 'Νεα Κράτηση',
-        body: `Ημέρα: ${details.date_booking}, Ωρα: ${details.time_slot}`,
+        body: `${user?.last_name} ${user?.first_name} κράτηση στις ${details.time_slot} ${date}`,
       });
       return booking;
     } catch (e) {
