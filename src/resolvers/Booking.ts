@@ -71,9 +71,12 @@ export class BookingResolver {
       const admins = (await db.user.findMany({ where: { admin: true } }))
         .map(user => user.token_id)
         .filter(Boolean);
+
       const user = await db.user.findUnique({
         where: { id: details.userId },
       });
+
+      if (!user) throw new Error('User not found');
 
       const date = new Date(details.date_booking).toLocaleDateString('el-GR', {
         weekday: 'long',
@@ -84,7 +87,7 @@ export class BookingResolver {
       // Send notification to admins
       sendNotification(admins, {
         title: 'Νεα Κράτηση',
-        body: `${user?.last_name} ${user?.first_name} κράτηση στις ${details.time_slot} ${date}`,
+        body: `${user.last_name} ${user.first_name} κράτηση στις ${details.time_slot} ${date}`,
       });
 
       return booking;
